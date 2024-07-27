@@ -1,7 +1,9 @@
 "use server";
 
 import { adminDb } from "@/firebase-admin";
+import liveblocks from "@/lib/liveblocks";
 import { auth } from "@clerk/nextjs/server";
+// import { collection } from "firebase/firestore";
 
 export async function createNewDocument() {
 	try {
@@ -35,3 +37,35 @@ export async function createNewDocument() {
 		throw new Error("Failed to create new document. Please try again later.");
 	}
 }
+
+export async function deleteDocument(roomId: string) {
+	auth().protect();
+	console.log("deleteDocument: ", roomId);
+	
+	try {
+		await adminDb.collection("docments").doc(roomId).delete();
+
+		const query = await adminDb
+			.collectionGroup("rooms")
+			.where("roomId", "==", roomId)
+			.get();
+
+		const batch = adminDb.batch();
+		query.docs.forEach((doc) => {
+			batch.delete(doc.ref);
+		});
+
+		await batch.commit();
+
+		await liveblocks.deleteRoom(roomId);
+
+		return { success: true };
+
+
+	} catch (error) {
+		console.error(error);
+		return {success : false}
+		
+	}
+}
+

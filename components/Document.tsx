@@ -7,19 +7,22 @@ import { doc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase";
 import { useDocumentData } from "react-firebase-hooks/firestore";
 import Editor from "./Editor";
+import useOwner from "@/lib/useOwner";
+import DeleteDocument from "./DeleteDocument";
 
 function Document({ id }: { id: string }) {
 	const [data, loading, error] = useDocumentData(doc(db, "documents", id));
 	const [input, setInput] = useState("");
 
 	const [isUpdating, startTransition] = useTransition();
-	// const isOwner = useOwner();
+
+	const isOwner = useOwner();
 
 	useEffect(() => {
 		if (data) {
 			setInput(data.title);
 		}
-	},[data])
+	}, [data]);
 
 	const updateTitle = (e: FormEvent) => {
 		e.preventDefault();
@@ -33,7 +36,7 @@ function Document({ id }: { id: string }) {
 		}
 	};
 	return (
-		<div>
+		<div className="flex-1 h-1 bg-white p-5">
 			<div className="flex justify-between mx-auto pb-5 max-w-6xl">
 				<form className="flex flex-1 space-x-2 " onSubmit={updateTitle}>
 					<Input value={input} onChange={(e) => setInput(e.target.value)} />
@@ -42,7 +45,14 @@ function Document({ id }: { id: string }) {
 						{isUpdating ? "Updating..." : "Update"}
 					</Button>
 
-					{/**if you are the owner && Invite,DeleteDocument */}
+					{isOwner && (
+						<>
+						{/**Invite */}
+						{/***Delete */}
+						<DeleteDocument />
+						
+						</>
+					)}
 				</form>
 			</div>
 			<div>
@@ -51,7 +61,7 @@ function Document({ id }: { id: string }) {
 				{/**Avattar */}
 			</div>
 
-			<hr className="pb-10"/>
+			<hr className="pb-10" />
 
 			<Editor />
 
