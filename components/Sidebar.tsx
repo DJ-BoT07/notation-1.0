@@ -98,7 +98,7 @@ function Sidebar() {
 						))}
 					</>
 				)}
-			</div>
+			
 			{/*My List....*/}
 			{groupedData.editor.length > 0 && (
 				<>
@@ -109,6 +109,7 @@ function Sidebar() {
 				</>
 			)}
 			{/*Liste*/}
+			</div>
 		</>
 	);
 

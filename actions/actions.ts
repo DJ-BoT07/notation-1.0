@@ -41,7 +41,7 @@ export async function createNewDocument() {
 export async function deleteDocument(roomId: string) {
 	auth().protect();
 	console.log("deleteDocument: ", roomId);
-	
+
 	try {
 		await adminDb.collection("docments").doc(roomId).delete();
 
@@ -60,42 +60,53 @@ export async function deleteDocument(roomId: string) {
 		await liveblocks.deleteRoom(roomId);
 
 		return { success: true };
-
-
 	} catch (error) {
 		console.error(error);
-		return {success : false}
-		
+		return { success: false };
 	}
 }
 
-
-export async function inviteUserToDocument(roomId: string, email: string){
+export async function inviteUserToDocument(roomId: string, email: string) {
 	auth().protect();
 
 	console.log("Invite User to Document: ", roomId, email);
 
 	try {
 		await adminDb
-		.collection("users")
-		.doc(email)
-		.collection("rooms")
-		.doc(roomId)
-		.set({
-			userId: email,
-			role: "editor",
-			createdAt: new Date(),
-			roomId,
-		});
+			.collection("users")
+			.doc(email)
+			.collection("rooms")
+			.doc(roomId)
+			.set({
+				userId: email,
+				role: "editor",
+				createdAt: new Date(),
+				roomId,
+			});
 
-		return {success: true};
-
-
+		return { success: true };
 	} catch (error) {
 		console.error(error);
-		return {success : false};
+		return { success: false };
 	}
+}
+
+export async function removeUserFromDocument(roomId: string, email: string) {
+	auth().protect();
+	console.log("Remove User from Document: ", roomId, email);
 	
 
-} 
+	try {
+		await adminDb
+			.collection("users")
+			.doc(email)
+			.collection("rooms")
+			.doc(roomId)
+			.delete();
 
+		return { success: true };
+	} catch (error) {
+		console.error(error);
+		return { success: false };
+	}
+}
