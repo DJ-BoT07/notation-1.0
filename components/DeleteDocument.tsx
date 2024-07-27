@@ -57,7 +57,7 @@ function DeleteDocument() {
                         This will delete the document and all its content.
                     </DialogDescription>
                 </DialogHeader>
-                <DialogFooter>
+                <DialogFooter className="sm:justify-end gap-2">
                     <Button
                         type="button"
                         variant="destructive"
